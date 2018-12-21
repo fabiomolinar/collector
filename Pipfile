@@ -8,6 +8,9 @@ Scrapy = "==1.5.1"
 numpy = "==1.15.4"
 dj_database_url = "==0.5.0"
 psycopg2-binary = "==2.7.6.1"
+scrapyd = "==1.2.0"
+setuptools = "==40.6.3"
+scrapyd-client = "==1.1.0"
 
 [requires]
 python_version = "3.6"

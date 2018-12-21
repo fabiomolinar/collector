@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "470f29078bfbc7acf2f4b931a2cd8f2ef3631ddac3565707363444566bb3efd9"
+            "sha256": "aa519a796ef5971cfe9017fe869cfdc0aeac3cc2b937b468567200e93ebb7840"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -308,6 +308,22 @@
             ],
             "index": "pypi",
             "version": "==1.5.1"
+        },
+        "scrapyd": {
+            "hashes": [
+                "sha256:4983898bd6b6c53735cfa9e92e166c1d89d5c108a36ae2959c5cae914dc61887",
+                "sha256:c7189100759e60ee5ae7fec1f040a6be88e20fbbd353ac07db6a78d729bada7f"
+            ],
+            "index": "pypi",
+            "version": "==1.2.0"
+        },
+        "scrapyd-client": {
+            "hashes": [
+                "sha256:caa0f5369c2e1efa7b79c309afb9819b2518870c5f4f2caf84d3e474cd6a9890",
+                "sha256:e547475c5c8dbd811e2cc4141a0e7b4ba47600e9980c59df4f831bb60b94e4cb"
+            ],
+            "index": "pypi",
+            "version": "==1.1.0"
         },
         "service-identity": {
             "hashes": [

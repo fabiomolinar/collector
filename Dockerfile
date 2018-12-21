@@ -17,9 +17,10 @@ RUN apt-get update && apt-get install -y \
   python3 \
   python3-dev
 
-RUN mkdir -p /opt/services/collector/src
+RUN mkdir -p /opt/services/collector/src && mkdir -p /etc/scrapyd/conf.d
 WORKDIR /opt/services/collector/src
 COPY Pipfile Pipfile.lock /opt/services/collector/src/
+COPY ./scrapyd/scrapyd.conf /etc/scrapyd/conf.d/scrapyd.conf
 
 # install our dependencies
 RUN pip install --upgrade pip && \
@@ -28,3 +29,5 @@ RUN pip install --upgrade pip && \
 
 # copy our project code
 COPY . /opt/services/collector/src
+
+CMD scrapyd && scrapyd-deploy
