@@ -1,4 +1,5 @@
 FROM python:3.6
+SHELL [ "/bin/bash", "-c" ]
 # proxy settings
 ARG PROXY
 ENV http_proxy=${PROXY}
@@ -30,4 +31,5 @@ RUN pip install --upgrade pip && \
 # copy our project code
 COPY . /opt/services/collector/src
 
-CMD scrapyd && scrapyd-deploy
+# Redirect scrapyd streams to /dev/null, send it to the background, cd to project folder and run the deploy; finally, running dummy command to keep container alive.
+CMD scrapyd >& /dev/null & cd ali && scrapyd-deploy && tail -f /dev/null
