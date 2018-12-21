@@ -65,9 +65,9 @@ DEFAULT_REQUEST_HEADERS = {
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'ali.pipelines.AliPipeline': 300,
-#}
+ITEM_PIPELINES = {
+    'ali.pipelines.AliPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -89,3 +89,10 @@ DEFAULT_REQUEST_HEADERS = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+#PostgreSQL related settings
+DB_USER = 'ali'
+DB_PASS = 'ali'
+DB_HOST = 'website_db'
+DB_PORT = '5432'
+DB_NAME = 'ali'

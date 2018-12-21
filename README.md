@@ -89,41 +89,16 @@ From there, we can use:
 
 ### Pipeline to DB
 
-I will create a pipeline to save the extracted data to a postgreSQL DB.
+I will manage the DBs on Django. 
 
-The name of the DB is **alisearch**. To create it:
+To run the crawlers from my dev environment, I need to overwrite the DB_HOST paramenter to point it to the localhost where I am running postgres. Like this:
 
-```SQL
-CREATE TABLE searches (
-    /* pk */
-    id SERIAL PRIMARY KEY,
-    /* text used on the search */
-    search_text TEXT,
-    /* primary fields */
-    results INT,
-    walled_brands TEXT [],
-    currency VARCHAR(9),
-    /* calculated fields */
-    max_price real,
-    min_price real,
-    average real,
-    median real,
-    stddev real,
-    number_points INT,
-    max_price_nc real,
-    min_price_nc real,
-    average_nc real,
-    median_nc real,
-    stddev_nc real,
-    number_points_nc INT,
-    /* housekeeping fields */
-    used_url TEXT,
-    project VARCHAR(51),
-    spider VARCHAR(51),
-    server_name VARCHAR(51),
-    date_created TIMESTAMP
-);
-```
+`scrapy crawl -s DB_HOST=localhost search -a searchtext=watches`
+
+Whereas while running on the containerized environment, since the DB is running on a different container, we need to plug our Scrapy container to that container network. We can use the following command:
+
+`sudo docker run -it --network <network name> collector bash`. E.g.:
+`sudo docker run -it --network website_website_db_network collector bash`
 
 ## Scrapyd
 
