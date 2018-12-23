@@ -31,5 +31,5 @@ RUN pip install --upgrade pip && \
 # copy our project code
 COPY . /opt/services/collector/src
 
-# Redirect scrapyd streams to /dev/null, send it to the background, cd to project folder and run the deploy; finally, running dummy command to keep container alive.
-CMD scrapyd >& /dev/null & cd ali && scrapyd-deploy && tail -f /dev/null
+# Set bash monitor mode on; run server on the background, deploy eggs, get server to the foreground again.
+CMD set -m; scrapyd & cd ali && scrapyd-deploy && fg scrapyd
