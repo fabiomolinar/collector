@@ -1,5 +1,7 @@
 # Collector
 
+This is just a bunch of notes I take in order not to forget things in the future. :)
+
 ## Managing the containers
 
 - Building

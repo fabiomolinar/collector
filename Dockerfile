@@ -31,5 +31,7 @@ RUN pip install --upgrade pip && \
 # copy our project code
 COPY . /opt/services/collector/src
 
+EXPOSE 6800
+
 # Set bash monitor mode on; run server on the background, deploy eggs, get server to the foreground again.
 CMD set -m; scrapyd & cd ali && scrapyd-deploy && fg scrapyd
