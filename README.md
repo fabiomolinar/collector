@@ -89,7 +89,7 @@ From there, we can use:
     - Example:
         - `scrapy crawl search -a searchtext=mp3`
 
-### Pipeline to DB
+### Pipeline to DB (dev vs prod environment)
 
 I will manage the DBs on Django. 
 

@@ -43,6 +43,8 @@ class AliPipeline(object):
         self.postgresql_url = postgresql_url
         # Report connection error only once
         self.report_connection_error = True
+        # Flag to catch if no results were returned
+        self.no_results = True
 
         # Parse PostgreSQL URL and try to initialize a connection
         conn_kwargs = AliPipeline.parse_postgresql_url(postgresql_url)
@@ -51,29 +53,42 @@ class AliPipeline(object):
 
     def close_spider(self, spider):
         """Discard the database pool on spider close"""
+        if self.no_results:
+            try:
+                self.dbpool.runInteraction(self.report_empty)
+            except psycopg2.OperationalError:
+                if self.report_connection_error:
+                    spider.logger.error("Can't connect to PostgreSQL: %s" % self.postgresql_url)
+                    self.report_connection_error = False
+                print(traceback.format_exc())
         self.dbpool.close()
 
     @defer.inlineCallbacks
     def process_item(self, item, spider):
         """Processes the item. Does insert into PostgreSQL"""
-        
-        logger = spider.logger
 
         # If there is no item, that's probably because there were no results returned at all
         if len(item) <= 0:
             raise DropItem("No items on the pipeline")
 
+        self.no_results = False
         try:
             yield self.dbpool.runInteraction(self.do_replace, item)
         except psycopg2.OperationalError:
             if self.report_connection_error:
-                logger.error("Can't connect to PostgreSQL: %s" % self.postgresql_url)
+                spider.logger.error("Can't connect to PostgreSQL: %s" % self.postgresql_url)
                 self.report_connection_error = False
             print(traceback.format_exc())
             
 
         # Return the item for the next stage
         defer.returnValue(item)
+
+    @staticmethod
+    def report_empty(tx):
+        notify = "NOTIFY ali_search, 'search request returned empty'"
+        tx.execute(notify)
+
     @staticmethod
     def do_replace(tx, item):
         """Does the actual INSERT"""
@@ -109,6 +124,9 @@ class AliPipeline(object):
             item["date_created"][0]
         )
 
+        notify = "NOTIFY ali_search, '" + item["search_text"][0] + "'"
+
+        tx.execute(notify)
         tx.execute(sql, args)
 
     @staticmethod
