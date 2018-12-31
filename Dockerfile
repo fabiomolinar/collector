@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install -y \
   libffi-dev \
   libssl-dev \
   python3 \
-  python3-dev
+  python3-dev \
+  at
 
 RUN mkdir -p /opt/services/collector/src && mkdir -p /etc/scrapyd/conf.d
 WORKDIR /opt/services/collector/src
@@ -33,6 +34,8 @@ COPY . /opt/services/collector/src
 
 EXPOSE 6800
 
-# Set bash monitor mode on; run server on the background, deploy eggs, get server to the foreground again.
-CMD set -m; scrapyd & cd ali && scrapyd-deploy && cd .. & fg scrapyd
-#CMD scrapyd
+# set entrypoint
+COPY ./scripts/entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+ENTRYPOINT [ "entrypoint.sh" ]
+CMD [ "scrapyd" ]
