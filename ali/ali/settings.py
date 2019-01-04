@@ -9,6 +9,8 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+import os
+
 BOT_NAME = 'ali'
 
 SPIDER_MODULES = ['ali.spiders']
@@ -92,7 +94,7 @@ ITEM_PIPELINES = {
 
 #PostgreSQL related settings
 DB_USER = 'ali'
-DB_PASS = 'ali'
-DB_HOST = 'website_db'
+DB_PASS = os.environ.get('WEBSITE_POSTGRES_WEBSITE_PASSWORD', 'website')
+DB_HOST = os.environ.get('WEBSITE_DJANGO_DB_HOST', 'website_db')
 DB_PORT = '5432'
 DB_NAME = 'ali'
