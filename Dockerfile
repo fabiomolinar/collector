@@ -37,5 +37,8 @@ EXPOSE 6800
 # set entrypoint
 COPY ./scripts/entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
+# setting env paths and variables so scrapy is able to find my settings
+ENV PYTHONPATH=/opt/services/collector/src/ali
+ENV SCRAPY_SETTINGS_MODULE=ali.settings
 ENTRYPOINT [ "entrypoint.sh" ]
 CMD [ "scrapyd" ]
