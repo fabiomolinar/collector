@@ -34,7 +34,7 @@ class PriceReader():
         self._is_average = None
 
     @property
-    def _is_average(self):
+    def is_average(self):
         if not self._is_average:
             warnings.warn("The property is_average is not set. Try running PriceReader.read() first.")
         return self._amount
@@ -82,31 +82,33 @@ class PriceReader():
             currency = self.__class__.default_value
         if not amount:
             amount = self.__class__.default_value
-        return self.extract_amount(*args, amount=amount) and self.extract_currency(*args, currency=currency)
+        return self._extract_amount(*args, amount=amount) and self._extract_currency(*args, currency=currency)
 
-    def extract_amount(self, *args, amount):
+    def _extract_amount(self, *args, amount):
         if type(amount) != str:
             raise TypeError("A string is expected.")
         amount = self.__class__.clean_string(*args, var=amount)
         # TO FINISH
         
     
-    def extract_currency(self, *args, currency):
+    def _extract_currency(self, *args, currency):
         if type(currency) != str:
             raise TypeError("A string is expected.")
         currency = self.__class__.clean_string(*args, var=currency)
         first_digit_position = self.__class__.get_first_digit_position(currency)
         last_digit_position = self.__class__.get_last_digit_position(currency)
-        currency_code = self.search_currency(currency[0:first_digit_position])
+        currency_code = self._search_currency(currency[0:first_digit_position])
         if not currency_code:
-            currency_code = self.search_currency(currency[last_digit_position:])
+            currency_code = self._search_currency(currency[last_digit_position:])
         if not currency_code:
             return False
         self._currency = currency_code
         return True
         
 
-    def search_currency(self, var):
+    def _search_currency(self, var):
+        if var == "" or type(var) != str:
+            return None
         found_currencies = []
         for c in self.__class__.common_currencies + self.__class__.other_currencies:
             if var in c["code"]:
