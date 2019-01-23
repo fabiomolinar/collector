@@ -1,15 +1,16 @@
 common_currencies = [
-    {"code":"USD","aka":["USD", "$"]},
+    {"code":"USD","aka":["USD", "US", "US$", "$"]},
     {"code":"EUR","aka":["EUR", "€"]},
-    {"code":"JPY","aka":["JPY", "¥"]},
     {"code":"GBP","aka":["GBP", "£"]},
-    {"code":"AUD","aka":["AUD", "$"]},
+    {"code":"BRL","aka":["BRL", "R$"]},
+    {"code":"PLN","aka":["PLN", "zł"]},
+    {"code":"JPY","aka":["JPY", "¥"]},
+    {"code":"AUD","aka":["AUD", "AU", "AU$", "$"]},
     {"code":"CAD","aka":["CAD", "$"]},
     {"code":"CHF","aka":["CHF", "₣", "CHF"]},
     {"code":"CNY","aka":["CNY", "CNH", "¥"]},
     {"code":"SEK","aka":["SEK", "kr"]},
     {"code":"NZD","aka":["NZD", "$"]},
-    {"code":"BRL","aka":["BRL", "R$"]},
     {"code":"RUB","aka":["RUB", "р.", "₽"]}
 ]
 other_currencies = [
@@ -84,7 +85,6 @@ other_currencies = [
     {"code":"PYG","aka":["PYG", "₲", "Gs"]},
     {"code":"PEN","aka":["PEN", "S/."]},
     {"code":"PHP","aka":["PHP", "₱"]},
-    {"code":"PLN","aka":["PLN", "zł"]},
     {"code":"QAR","aka":["QAR", "ر.ق", "﷼"]},
     {"code":"RON","aka":["RON", "L", "lei"]},
     {"code":"SHP","aka":["SHP", "£"]},
