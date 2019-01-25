@@ -57,6 +57,7 @@ class PriceReader():
     def preffered_currency(self, preffered_currency):
         if self.currency_exists(preffered_currency):
             self._preffered_currency = preffered_currency
+            return
         raise ValueError("Currency code don't exist on list of currencies")
     
     def currency_exists(self, currency):
@@ -116,8 +117,9 @@ class PriceReader():
         for c in self.__class__.common_currencies + self.__class__.other_currencies:
             if var in c["code"]:
                 return c["code"]
+        for c in self.__class__.common_currencies + self.__class__.other_currencies:
             for s in c["aka"]:
-                if var.upper() in s.upper():
+                if s.upper() in var.upper():
                     if c["code"] == self.preffered_currency or not self.preffered_currency:
                         return c["code"]
                     found_currencies.append(c["code"])

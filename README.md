@@ -138,3 +138,23 @@ Scrapyd is a server which run spiders by responding to HTTP requests sent to it.
 ## Cron jobs
 
 One idea is to set a cron job to run a custom manage.py command periodically as mentioned [here](https://stackoverflow.com/questions/573618/django-set-up-a-scheduled-job).
+
+## unittest
+
+To add verbosity use `-v`.
+
+### Example
+
+From collector/ali run: `python3 -m unittest tests.ali.utils.reader`
+
+### CLI
+
+#### Examples
+
+- python -m unittest test_module1 test_module2
+- python -m unittest test_module.TestClass
+- python -m unittest test_module.TestClass.test_method
+
+#### Discovery
+
+To let `unittest` to search the project for tests, just run `python3 -m unittest discover`.
