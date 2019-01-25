@@ -13,7 +13,7 @@ from ali.utils.reader import PriceReader
 
 class WatchSpider(CrawlSpider):
     name = 'watch'
-    allowed_domains = ['aliexpress.com']
+    from ali.spiders import watcher_domains as allowed_domains
     
     def start_requests(self):
         link_text = getattr(self, 'link', None)
