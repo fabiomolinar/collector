@@ -34,3 +34,18 @@ class AliItem(scrapy.Item):
     spider = scrapy.Field()
     server_name = scrapy.Field()
     date_created = scrapy.Field()
+
+class WatchItem(scrapy.Item):
+    #Primary fields
+    amount = scrapy.Field()
+    currency = scrapy.Field()
+    #Input fields
+    data_path = scrapy.Field()
+    currency_path = scrapy.Field()
+    amount_path = scrapy.Field()
+    #Housekeeping fields
+    used_url = scrapy.Field()
+    project = scrapy.Field()
+    spider = scrapy.Field()
+    server_name = scrapy.Field()
+    date_created = scrapy.Field()
