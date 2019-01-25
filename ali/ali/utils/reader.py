@@ -22,8 +22,10 @@ class PriceReader():
     other_currencies = currencies.other_currencies
     space_newline_pattern = re.compile(r"\s|\n")
     digit_pattern = re.compile(r"\d")
+    decimal_separators_pattern = re.compile(r'\.|\,')
+    range_signal_pattern = re.compile(r'\-')
     default_value = ""
-
+    
     def __init__(self, preffered_currency=None):
         if preffered_currency:
             self.preffered_currency = preffered_currency
@@ -78,20 +80,9 @@ class PriceReader():
         This method returns TRUE if it can parse the data succesfully (both amount and currency).
         It returns FALSE otherwise.
         """
-        if not currency:
-            currency = self.__class__.default_value
-        if not amount:
-            amount = self.__class__.default_value
         return self._extract_amount(*args, amount=amount) and self._extract_currency(*args, currency=currency)
-
-    def _extract_amount(self, *args, amount):
-        if type(amount) != str:
-            raise TypeError("A string is expected.")
-        amount = self.__class__.clean_string(*args, var=amount)
-        # TO FINISH
-        
     
-    def _extract_currency(self, *args, currency):
+    def _extract_currency(self, *args, currency=None):
         if type(currency) != str:
             raise TypeError("A string is expected.")
         currency = self.__class__.clean_string(*args, var=currency)
@@ -106,7 +97,7 @@ class PriceReader():
         return True
         
 
-    def _search_currency(self, var):
+    def _search_currency(self, var=None):
         if var == "" or type(var) != str:
             return None
         found_currencies = []
@@ -122,6 +113,47 @@ class PriceReader():
             return found_currencies[0]
         return None
 
+    def _extract_amount(self, *args, amount=None):
+        if type(amount) != str:
+            raise TypeError("A string is expected.")
+        amount = self.__class__.clean_string(*args, var=amount)
+        first_digit_position = self.__class__.get_first_digit_position(amount)
+        last_digit_position = self.__class__.get_last_digit_position(amount)
+        amount = amount[first_digit_position:last_digit_position]
+        decimal_separator = self.__class__.detect_decimal_separator(amount)
+        amount = re.sub(re.compile(
+            "[^" + self.__class__.digit_pattern.pattern +
+            self.__class__.range_signal_pattern.pattern +
+            "\\" + decimal_separator + "]"
+        ),"",amount)
+        left = re.match(r"^[\d" + "\\" + decimal_separator + "]+", amount)
+        left = self.__class__.to_float(left)
+        if left is None:
+            return False
+        self._is_average = False
+        right = re.match(r"[\d" + "\\" + decimal_separator + "]+$", amount)
+        right = self.__class__.to_float(right)
+        if right is None:
+            self._amount = left
+        else:
+            if re.fullmatch(self.__class__.range_signal_pattern, amount):
+                self._is_average = True
+            self._amount = (left+right)/2
+        return True
+
+    @classmethod
+    def to_float(cls, var):
+        var = re.sub(r',', ".", var)
+        try:
+            return float(var)
+        except:
+            return None
+
+    @classmethod
+    def detect_decimal_separator(cls, var):
+        last = deque(cls.decimal_separators_pattern.finditer(var)).pop()
+        return last[0]
+
     @classmethod
     def get_first_digit_position(cls, var):
         first = next(cls.digit_pattern.finditer(var))
@@ -133,8 +165,8 @@ class PriceReader():
         return last.end()
         
     @classmethod
-    def clean_string(cls, *args, var):
-        if var == cls.default_value and len(args) > 0:
+    def clean_string(cls, *args, var=None):
+        if var is None and len(args) > 0:
             var = "".join(args)
         var = re.sub(cls.space_newline_pattern,"",var)
         return var

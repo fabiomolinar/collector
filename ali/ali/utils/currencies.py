@@ -106,7 +106,7 @@ other_currencies = [
     {"code":"UAH","aka":["UAH", "₴"]},
     {"code":"UYU","aka":["UYU", "$", "$U"]},
     {"code":"UZS","aka":["UZS", "лв"]},
-    {"code":"VEF","aka":["VEF", "Bs F", "Bs"]},
+    {"code":"VEF","aka":["VEF", "Bs F", "Bs", "BsF"]},
     {"code":"VND","aka":["VND", "₫"]},
     {"code":"YER","aka":["YER", "﷼"]},
     {"code":"ZWD","aka":["ZWD", "Z$"]},
