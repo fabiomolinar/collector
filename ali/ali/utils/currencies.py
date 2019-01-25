@@ -1,5 +1,5 @@
 common_currencies = [
-    {"code":"USD","aka":["USD", "US", "US$", "$"]},
+    {"code":"USD","aka":["USD", "US", "US$", "$", "USD$"]},
     {"code":"EUR","aka":["EUR", "€"]},
     {"code":"GBP","aka":["GBP", "£"]},
     {"code":"BRL","aka":["BRL", "R$"]},

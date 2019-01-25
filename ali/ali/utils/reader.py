@@ -1,19 +1,16 @@
-"""
-Class of objects that know how to read specific data
-"""
+"""Class of objects that know how to read specific data from strings"""
 import warnings
 import re
 
 from collections import deque
 
 class PriceReader():
-    """
-    An object that, given a string, can take monetary values out of it.
+    """An object that, given a string, can take monetary values out of it.
 
     This object should have only one method exposed to the user: read().
-        If this method returns TRUE, it means we could read the data.
-    And the user should be able to get four properties: preffered_currency, amount, currency, is_average
-    The property is_average let's us know if the amount calculated is a single value or if it was 
+    If this method returns TRUE, it means we could read the data.
+    
+    The property "is_average" let's us know if the amount calculated is a single value or if it was 
     calculated by averaging other numbers.
     """
     from . import currencies
@@ -24,7 +21,6 @@ class PriceReader():
     digit_pattern = re.compile(r"\d")
     decimal_separators_pattern = re.compile(r'\.|\,')
     range_signal_pattern = re.compile(r'\-')
-    default_value = ""
     
     def __init__(self, preffered_currency=None):
         if preffered_currency:
@@ -70,22 +66,38 @@ class PriceReader():
                 return True
         return False
 
-    def read(self, *args, currency=None, amount=None):
-        """
-        Tries to read information about the amount and currency from a given string
+    def read(self, *args: str, currency: str=None, amount: str=None) -> bool:
+        """Read information about the amount and currency from a given string or list of strings.
+        
         The user can specify which strings contain the amount information and the 
         currency information. Otherwise, it will be considered that this information is contained 
         as a list of strings passed to args.
 
         This method returns TRUE if it can parse the data succesfully (both amount and currency).
         It returns FALSE otherwise.
+
+        Args:
+            args: list of data containing information about currency and/or amount
+            currency: string with currency information
+            amount: string with amount information
+        
+        Returns:
+            True if we were able to read information about currency and amount. False otherwise.
         """
-        return self._extract_amount(*args, amount=amount) and self._extract_currency(*args, currency=currency)
+        if args is None and currency is None and amount is None:
+            return False
+        if (currency is None or amount is None) and args is None:
+            return False
+        if not self._extract_amount(*args, amount=amount):
+            return False
+        if not self._extract_currency(*args, currency=currency):
+            return False
+        return True
     
-    def _extract_currency(self, *args, currency=None):
+    def _extract_currency(self, *args: str, currency: str=None) -> bool:
+        currency = self.__class__.clean_string(*args, var=currency)
         if type(currency) != str:
             raise TypeError("A string is expected.")
-        currency = self.__class__.clean_string(*args, var=currency)
         first_digit_position = self.__class__.get_first_digit_position(currency)
         last_digit_position = self.__class__.get_last_digit_position(currency)
         currency_code = self._search_currency(currency[0:first_digit_position])
@@ -97,7 +109,7 @@ class PriceReader():
         return True
         
 
-    def _search_currency(self, var=None):
+    def _search_currency(self, var: str=None) -> str:
         if var == "" or type(var) != str:
             return None
         found_currencies = []
@@ -113,10 +125,10 @@ class PriceReader():
             return found_currencies[0]
         return None
 
-    def _extract_amount(self, *args, amount=None):
+    def _extract_amount(self, *args: str, amount: str=None) -> bool:
+        amount = self.__class__.clean_string(*args, var=amount)
         if type(amount) != str:
             raise TypeError("A string is expected.")
-        amount = self.__class__.clean_string(*args, var=amount)
         first_digit_position = self.__class__.get_first_digit_position(amount)
         last_digit_position = self.__class__.get_last_digit_position(amount)
         amount = amount[first_digit_position:last_digit_position]
@@ -131,22 +143,24 @@ class PriceReader():
         if left is None:
             return False
         self._is_average = False
-        right = re.match(r"[\d" + "\\" + decimal_separator + "]+$", amount)
+        right = re.findall(r"[\d" + "\\" + decimal_separator + "]+$", amount)
         right = self.__class__.to_float(right)
         if right is None:
             self._amount = left
         else:
-            if re.fullmatch(self.__class__.range_signal_pattern, amount):
+            if re.findall(self.__class__.range_signal_pattern, amount):
                 self._is_average = True
             self._amount = (left+right)/2
         return True
 
     @classmethod
     def to_float(cls, var):
-        var = re.sub(r',', ".", var)
+        if type(var) == str:
+            var = [var]
         try:
+            var = re.sub(r',', ".", var[0])
             return float(var)
-        except:
+        except TypeError:
             return None
 
     @classmethod
