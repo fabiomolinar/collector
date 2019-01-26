@@ -5,3 +5,18 @@
 watcher_domains = [
     'aliexpress.com'
 ]
+
+watcher_mapping = [
+    {
+        "domain": "aliexpress.com",
+        "currency": [
+            '//div[contains(@class, "p-price-content")]//span[contains(@itemprop, "priceCurrency")]/@content'
+        ],
+        "amount": [
+            '//div[contains(@class, "p-price-content")]//span[contains(@itemprop, "lowPrice")]/text()',
+            '//div[contains(@class, "p-price-content")]//span[contains(@class, "p-price")]/text()',
+            '//div[contains(@class, "p-price-content")]//span[contains(@itemprop, "highPrice")]/text()',
+            
+        ]
+    }
+]

@@ -2,6 +2,7 @@
 import scrapy
 import datetime
 import socket
+import ast
 
 from scrapy.spiders import CrawlSpider
 from scrapy.loader import ItemLoader
@@ -16,29 +17,28 @@ class WatchSpider(CrawlSpider):
     from ali.spiders import watcher_domains as allowed_domains
     
     def start_requests(self):
-        link_text = getattr(self, 'link', None)
-        link = eval(link_text)
+        link = getattr(self, 'link', "None")
         meta = {
-            "data_path": getattr(self, 'data', None),
-            "currency_path": getattr(self, 'currency', None),
-            "amount_path": getattr(self, 'amount', None),
-            "preffered_currency": getattr(self, 'preffered_currency', None),
+            "data_path": ast.literal_eval(getattr(self, 'data', "None")),
+            "currency_path": ast.literal_eval(getattr(self, 'currency', "None")),
+            "amount_path": ast.literal_eval(getattr(self, 'amount', "None")),
+            "preffered_currency": ast.literal_eval(getattr(self, 'preffered_currency', "None")),
         }
         yield scrapy.Request(link, meta=meta)
-
+    
     def parse_item(self, response):
         pr = PriceReader(response.meta["preffered_currency"])
-        data_string = response.xpath(response.meta["data_path"]).extract_first
-        currency_string = response.xpath(response.meta["currency_path"]).extract_first()
-        amount_string = response.xpath(response.meta["amount_path"]).extract_first()
+        data_string = self.__class__.retrieve_strings(response, response.meta["data_path"])
+        currency_string = self.__class__.retrieve_strings(response, response.meta["currency_path"])
+        amount_string = self.__class__.retrieve_strings(response, response.meta["amount_path"])
         if not pr.read(data_string, currency=currency_string, amount=amount_string):
             raise CloseSpider("Couldn't parse amount and currency")
 
         l = ItemLoader(item=WatchItem(), response=response)
         #Input items
-        l.add_value('data_path', response.meta["data_path"])
-        l.add_value('currency_path', response.meta["currency_path"])
-        l.add_value('amount_path', response.meta["amount_path"])
+        l.add_value('data_string', response.meta["data_string"])
+        l.add_value('currency_string', response.meta["currency_string"])
+        l.add_value('amount_string', response.meta["amount_string"])
         #Primary items
         l.add_value('amount', pr.amount)
         l.add_value('currency', pr.currency)
@@ -50,3 +50,14 @@ class WatchSpider(CrawlSpider):
         l.add_value('date_created', datetime.datetime.now())
 
         return l.load_item()
+
+    @classmethod
+    def retrieve_strings(cls, response, items):
+        if type(items) != list:
+            items = [items]
+        result = ""
+        for i in items:
+            extracted = response.xpath(i).extract_first()
+            if type(extracted) == str:
+                result += extracted
+        return result if result != "" else None
