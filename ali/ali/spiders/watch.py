@@ -15,22 +15,28 @@ from ali.utils.reader import PriceReader
 class WatchSpider(CrawlSpider):
     name = 'watch'
     from ali.spiders import watcher_domains as allowed_domains
+    from ali.spiders import watcher_mapping
+    custom_settings = {
+        "ALLOW_WATCHPIPELINE": True
+    }
     
     def start_requests(self):
         link = getattr(self, 'link', "None")
         meta = {
-            "data_path": ast.literal_eval(getattr(self, 'data', "None")),
-            "currency_path": ast.literal_eval(getattr(self, 'currency', "None")),
-            "amount_path": ast.literal_eval(getattr(self, 'amount', "None")),
-            "preffered_currency": ast.literal_eval(getattr(self, 'preffered_currency', "None")),
+            "data_path": self.__class__.watcher_mapping[0]["data"],
+            "currency_path": self.__class__.watcher_mapping[0]["currency"],
+            "amount_path": self.__class__.watcher_mapping[0]["amount"],
+            "preffered_currency": self.__class__.watcher_mapping[0]["preffered_currency"],
         }
         yield scrapy.Request(link, meta=meta)
     
-    def parse_item(self, response):
+    def parse(self, response):
         pr = PriceReader(response.meta["preffered_currency"])
         data_string = self.__class__.retrieve_strings(response, response.meta["data_path"])
         currency_string = self.__class__.retrieve_strings(response, response.meta["currency_path"])
         amount_string = self.__class__.retrieve_strings(response, response.meta["amount_path"])
+        self.log("currency_string: " + currency_string)
+        self.log("amount_string: " + amount_string)
         if not pr.read(data_string, currency=currency_string, amount=amount_string):
             raise CloseSpider("Couldn't parse amount and currency")
 
@@ -53,6 +59,8 @@ class WatchSpider(CrawlSpider):
 
     @classmethod
     def retrieve_strings(cls, response, items):
+        if not items:
+            return None
         if type(items) != list:
             items = [items]
         result = ""

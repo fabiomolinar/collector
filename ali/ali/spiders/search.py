@@ -17,6 +17,9 @@ from ali.items import AliItem
 class SearchSpider(scrapy.Spider):
     name = 'search'
     allowed_domains = ['aliexpress.com']
+    custom_settings = {
+        "ALLOW_ALIPIPELINE": True
+    }
 
     def start_requests(self):
         query_param = {

@@ -70,6 +70,8 @@ DEFAULT_REQUEST_HEADERS = {
 ITEM_PIPELINES = {
     'ali.pipelines.AliPipeline': 300,
 }
+ALLOW_ALIPIPELINE: False
+ALLOW_WATCHPIPELINE: False
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html

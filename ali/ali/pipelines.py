@@ -20,6 +20,9 @@ class AliPipeline(object):
 
     @classmethod
     def from_crawler(cls, crawler):
+        if not crawler.settings.getbool("ALLOW_ALIPIPELINE"):
+            raise NotConfigured
+            
         # Get PostgreSQL URL from settings
         postgresql_url = (
             "postgresql://" +
