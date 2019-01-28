@@ -39,10 +39,7 @@ class WatchItem(scrapy.Item):
     #Primary fields
     amount = scrapy.Field()
     currency = scrapy.Field()
-    #Input fields
-    data_path = scrapy.Field()
-    currency_path = scrapy.Field()
-    amount_path = scrapy.Field()
+    is_average = scrapy.Field()
     #Housekeeping fields
     used_url = scrapy.Field()
     project = scrapy.Field()

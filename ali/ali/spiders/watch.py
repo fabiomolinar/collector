@@ -41,13 +41,10 @@ class WatchSpider(CrawlSpider):
             raise CloseSpider("Couldn't parse amount and currency")
 
         l = ItemLoader(item=WatchItem(), response=response)
-        #Input items
-        l.add_value('data_string', response.meta["data_string"])
-        l.add_value('currency_string', response.meta["currency_string"])
-        l.add_value('amount_string', response.meta["amount_string"])
         #Primary items
         l.add_value('amount', pr.amount)
         l.add_value('currency', pr.currency)
+        l.add_value('is_average', pr.is_average)
         #Housekeeping items
         l.add_value('used_url', response.url)
         l.add_value('project', self.settings.get('BOT_NAME'))

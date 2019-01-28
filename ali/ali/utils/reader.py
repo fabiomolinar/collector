@@ -35,7 +35,7 @@ class PriceReader():
     def is_average(self):
         if not self._is_average:
             warnings.warn("The property is_average is not set. Try running PriceReader.read() first.")
-        return self._amount
+        return self._is_average
 
     @property
     def amount(self):
@@ -103,9 +103,14 @@ class PriceReader():
             raise TypeError("A string is expected.")
         first_digit_position = self.__class__.get_first_digit_position(currency)
         last_digit_position = self.__class__.get_last_digit_position(currency)
-        currency_code = self._search_currency(currency[0:first_digit_position])
-        if not currency_code:
+
+        currency_code = None
+        if first_digit_position:
+            currency_code = self._search_currency(currency[0:first_digit_position])
+        if not currency_code and last_digit_position:
             currency_code = self._search_currency(currency[last_digit_position:])
+        if not currency_code:
+            currency_code = self._search_currency(currency)
         if not currency_code:
             return False
         self._currency = currency_code
@@ -133,6 +138,7 @@ class PriceReader():
         amount = self.__class__.clean_string(*args, var=amount)
         if type(amount) != str:
             raise TypeError("A string is expected.")
+
         first_digit_position = self.__class__.get_first_digit_position(amount)
         last_digit_position = self.__class__.get_last_digit_position(amount)
         amount = amount[first_digit_position:last_digit_position]
@@ -142,6 +148,7 @@ class PriceReader():
             self.__class__.range_signal_pattern.pattern +
             "\\" + decimal_separator + "]"
         ),"",amount)
+        
         left = re.match(r"^[\d" + "\\" + decimal_separator + "]+", amount)
         left = self.__class__.to_float(left)
         if left is None:
@@ -174,13 +181,17 @@ class PriceReader():
 
     @classmethod
     def get_first_digit_position(cls, var):
-        first = next(cls.digit_pattern.finditer(var))
-        return first.start()
+        try:
+            return next(cls.digit_pattern.finditer(var)).start()
+        except StopIteration:
+            return None
 
     @classmethod
     def get_last_digit_position(cls, var):
-        last = deque(cls.digit_pattern.finditer(var)).pop()
-        return last.end()
+        last = deque(cls.digit_pattern.finditer(var))
+        if len(last) > 0:
+            return last.pop().end()
+        return None
         
     @classmethod
     def clean_string(cls, *args, var=None):

@@ -28,4 +28,10 @@ price_reader_cases = [
     {"to_test": "SLL 1 030.2 dq", "preffered_currency": "SLL", "expected_currency": "SLL","expected_amount": 1030.2},
     {"to_test": "SLL 1 410,30 dq", "preffered_currency": "SLL", "expected_currency": "SLL","expected_amount": 1410.3},
     {"to_test": "SLL 1.320,04", "preffered_currency": "SLL", "expected_currency": "SLL","expected_amount": 1320.04},
+    # testing 'currency' and 'amount' inputs
+    {"to_test": "SLL 1.320,04", "currency":"SLL", "amount":"dq 1320.04", "preffered_currency": "SLL", "expected_currency": "SLL","expected_amount": 1320.04},
+    {"to_test": "SLL 1.320,04", "currency":"SLL dq", "amount":"1320.04 dq", "preffered_currency": "SLL", "expected_currency": "SLL","expected_amount": 1320.04},
+    {"to_test": "SLL 1.320,04", "currency":"dqSLL", "amount":"1,320.04 dq", "preffered_currency": "SLL", "expected_currency": "SLL","expected_amount": 1320.04},
+    {"to_test": "SLL 1.320,04", "currency":"SLL-dq", "amount":"dq 1 320.04", "preffered_currency": "SLL", "expected_currency": "SLL","expected_amount": 1320.04},
+    {"to_test": "SLL 1000.00 - 2000.0", "currency":" SLL ", "amount":"1000.00 - 2000.0", "preffered_currency": "SLL", "expected_currency": "SLL","expected_amount": 1500.0},
 ]

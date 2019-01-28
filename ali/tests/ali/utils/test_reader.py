@@ -22,6 +22,33 @@ class TestPriceReaderClass(unittest.TestCase):
                 self.pr.read(c["to_test"])
                 self.assertEqual(self.pr.amount,c["expected_amount"])
 
+    def test_currency_input(self):
+        for c in self.cases:
+            with self.subTest(c=c):
+                if "currency" not in c:
+                    self.skipTest("no currency input")
+                if "preffered_currency" in c:
+                    if c["preffered_currency"] != "":
+                        self.pr.preffered_currency = c["preffered_currency"]
+                self.pr.read(c["to_test"], currency=c["currency"])
+                self.assertEqual(self.pr.currency,c["expected_currency"])
+
+    def test_amount_input(self):
+        for c in self.cases:
+            with self.subTest(c=c):
+                if "amount" not in c:
+                    self.skipTest("no amount input")
+                self.pr.read(c["to_test"], amount=c["amount"])
+                self.assertEqual(self.pr.amount,c["expected_amount"])
+
+    def test_amount_and_currency_input(self):
+        for c in self.cases:
+            with self.subTest(c=c):
+                if "amount" not in c and "currency" not in c:
+                    self.skipTest("no amount nor currency input")
+                self.pr.read(currency=c["currency"], amount=c["amount"])
+                self.assertEqual(self.pr.amount,c["expected_amount"])        
+
     def test_preffered_currency(self):
         for c in self.cases:
             with self.subTest(c="to test: \"" + c["to_test"] + "\" with preffered currency as " + c["preffered_currency"]):
