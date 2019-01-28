@@ -8,7 +8,7 @@ watcher_domains = [
 
 watcher_mapping = [
     {
-        "domain": "aliexpress.com",
+        "domain_pattern": r'(aliexpress.com)$',
         "data": None,
         "currency": [
             '//div[contains(@class, "p-price-content")]//span[contains(@itemprop, "priceCurrency")]/@content'

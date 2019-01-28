@@ -3,6 +3,9 @@ import scrapy
 import datetime
 import socket
 import ast
+import re
+
+from urllib.parse import urlparse
 
 from scrapy.spiders import CrawlSpider
 from scrapy.loader import ItemLoader
@@ -22,13 +25,19 @@ class WatchSpider(CrawlSpider):
     
     def start_requests(self):
         link = getattr(self, 'link', "None")
-        meta = {
-            "data_path": self.__class__.watcher_mapping[0]["data"],
-            "currency_path": self.__class__.watcher_mapping[0]["currency"],
-            "amount_path": self.__class__.watcher_mapping[0]["amount"],
-            "preffered_currency": self.__class__.watcher_mapping[0]["preffered_currency"],
-        }
-        yield scrapy.Request(link, meta=meta)
+        parsed_link = urlparse(link)
+        meta = None
+        for i in self.__class__.watcher_mapping:
+            if re.search(i["domain_pattern"],parsed_link.netloc):
+                meta = {
+                    "data_path": i["data"],
+                    "currency_path": i["currency"],
+                    "amount_path": i["amount"],
+                    "preffered_currency": i["preffered_currency"],
+                }
+        if meta:
+            yield scrapy.Request(link, meta=meta)
+        
     
     def parse(self, response):
         pr = PriceReader(response.meta["preffered_currency"])
